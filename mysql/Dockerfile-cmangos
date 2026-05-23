@@ -1,21 +1,19 @@
-FROM mysql:5.7-debian
+FROM mysql:8.0-debian
 
 # Update system, and install git
 RUN apt-get update
 RUN apt-get install -y git
 
-# Clone project repos
+# Clone cmangos/classic-db project database repo
 WORKDIR /opt
 RUN git clone --depth=1 https://github.com/cmangos/classic-db.git; exit 0
+
+# We also need the core to get the base SQL files
 RUN git clone --depth=1 https://github.com/cmangos/mangos-classic.git; exit 0
 
-# Extract database
-WORKDIR /opt/classic-db/Full_DB
-RUN gunzip ClassicDB_1_12_1_z2815.sql.gz; exit 0
+RUN chown -R mysql:mysql /opt/classic-db
+RUN chown -R mysql:mysql /opt/mangos-classic
 
-# Copy auto populate script to either:
-# 1) /opt - then run it manually
-# 2) docker entrypoint - which will auto run on container start
-# Comment out one which one you don't want to use...
-# COPY ./init_cmangos.sh /opt/init_cmangos.sh
-COPY ./init_cmangos.sh /docker-entrypoint-initdb.d/init_cmangos.sh
+COPY ./init_cmangos_full.sh /docker-entrypoint-initdb.d/init_cmangos_full.sh
+
+# COPY ./init_cmangos_full.sh /opt/init_cmangos_full.sh

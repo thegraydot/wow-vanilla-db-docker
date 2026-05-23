@@ -1,10 +1,8 @@
-version: '3.1'
-
 services:
 
   mysql:
-    image: wow-classic-db-vmangos
-    container_name: wow-classic-db-vmangos
+    image: wow-vmangos-db
+    container_name: wow-vmangos-db
     build:
       context: mysql
       dockerfile: Dockerfile-vmangos
@@ -17,13 +15,13 @@ services:
       MYSQL_PORT: ${MYSQL_PORT}
     ports:
       - ${MYSQL_PORT}:${MYSQL_PORT}
-    command: --max_allowed_packet=128M
+    command: --max_allowed_packet=128M --innodb-redo-log-capacity=512M
     volumes:
-      - ./volumes/mysql:/var/lib/mysql
+      - ./volumes/vmangos_mysql:/var/lib/mysql
 
   python:
-    image: wow-classic-python-vmangos
-    container_name: wow-classic-python-vmangos
+    image: wow-vmangos-python
+    container_name: wow-vmangos-python
     build:
       context: python
       dockerfile: Dockerfile
@@ -32,6 +30,7 @@ services:
       mysql:
         condition: service_started
     environment:
+      - MYSQL_HOST=mysql
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_DATABASE=${MYSQL_DATABASE}

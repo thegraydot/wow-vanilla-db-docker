@@ -1,4 +1,4 @@
-FROM mysql:5.7-debian
+FROM mysql:8.0-debian
 
 # Update system, and install 7z + wget
 RUN apt-get update

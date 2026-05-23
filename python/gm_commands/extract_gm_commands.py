@@ -1,13 +1,12 @@
+import os
 import mysql.connector
 
 
-# Add in dotenv for vars
-
-HOST = "0.0.0.0"
-PORT = "3306"
-USER = "mangos"
-PASSWORD = "mangos"
-DATABASE = "classicmangos"
+HOST = os.environ.get("MYSQL_HOST", "mysql")
+PORT = int(os.environ.get("MYSQL_PORT", "3306"))
+USER = os.environ.get("MYSQL_USER")
+PASSWORD = os.environ.get("MYSQL_PASSWORD")
+DATABASE = os.environ.get("MYSQL_DATABASE")
 
 # Connect to MSSQL Server
 try:
@@ -35,8 +34,6 @@ for row in cursor:
     level = row[1]
     help_str = row[2]
     help_str = help_str.split("\r\n\r\n")
-    # print("START")
-    # print("%r" % help_str)
     if len(help_str) == 1:
         print("Line: %r" % help_str)
 
